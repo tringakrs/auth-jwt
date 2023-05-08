@@ -30,6 +30,14 @@ export class AuthController {
     return this.service.login(body);
   }
 
+  @Post('logout')
+  @UseGuards(JwtAuthGuard)
+  async logout(@Req() req: Request) {
+    const user = req.user as User;
+    await this.service.logout(user);
+    return { message: 'Logged out successfully' };
+  }
+
   @Post('refresh')
   @UseGuards(JwtAuthGuard)
   private refresh(@Req() { user }: Request): Promise<string | never> {

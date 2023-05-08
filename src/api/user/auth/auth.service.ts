@@ -18,7 +18,7 @@ export class AuthService {
     let user: User = await this.repository.findOne({ where: { email } });
 
     if (user) {
-      throw new HttpException('Conflict', HttpStatus.CONFLICT);
+      throw new HttpException('Email exists', HttpStatus.CONFLICT);
     }
 
     user = new User();
@@ -50,6 +50,11 @@ export class AuthService {
     this.repository.update(user.id, { lastLoginAt: new Date() });
 
     return this.helper.generateToken(user);
+  }
+
+  async logout(user: User) {
+    user.lastLogoutAt = new Date();
+    await this.repository.update(user.id, user);
   }
 
   public async refresh(user: User): Promise<string> {
